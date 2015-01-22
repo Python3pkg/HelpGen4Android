@@ -16,10 +16,10 @@ def main(argv):
         output_path = argv[0]
         print output_path
     else:
-		output_path = 'TimeCat'
-#output_path = 'helloWorld'
-    URL = "http://www.timecat.info/wiki/index.php/TimeCat:Doc:Help?action=render"
-     #URL = "http://128.2.116.101/mediawiki/index.php/HelpGenWiki4android?action=render"
+#	output_path = 'TimeCat'
+	output_path = 'helloWorld'
+    #URL = "http://www.timecat.info/wiki/index.php/TimeCat:Doc:Help?action=render"
+    URL = "http://128.2.116.101/mediawiki/index.php/HelpGenWiki4android?action=render"
     http = httplib2.Http()
     status,response = http.request(URL)
     for link in BeautifulSoup(response, parseOnlyThese = SoupStrainer('a')):
