@@ -1,0 +1,13 @@
+input: url
+download_queue
+traversal_queue
+
+1. Get the link list on the input url's page;
+2. Enque the link list into traversal_queue;
+3. Deque 1 link from the traversal_queue;
+4. Get all the links from the page we get from step 3,
+pick the internal links and enque them to traversal_queue;(make sure there is no duplicate in the queue)
+5. enque the link in step 3 to download_queue;
+6. go back to step 3 until the traversal_queue is empty;
+7. iterate all the link in download_queue ,get the page and modify the intern link to local link.store the parsed page. Remember to download images on each link also.
+
