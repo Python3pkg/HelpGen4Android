@@ -72,21 +72,40 @@ def main(argv):
         os.makedirs(outputDir)
     if not os.path.exists(outputDir+'/images/'):
         os.makedirs(outputDir+'/images/') 
-     
+    
+    traversal_queue = []
+    download_queue = []
+ 
 #    URL = "http://128.2.116.101/mediawiki/index.php/HelpGenWiki4android?action=render"
     http = httplib2.Http()
     status,response = http.request(URL)
 
-    filelist=[]
+    #enque the link in the template page
     for link in BeautifulSoup(response, parseOnlyThese = SoupStrainer('a')):
         if link.has_attr('href') and link.has_attr('title'):
 	    print link
-            status2,response2 = http.request(link['href']+'?action=render')
-    	    soup=BeautifulSoup(response2)
- 	    
-	    soup=parseImages(outputDir, server, soup); 
+            traversal_queue.append(link['href']+'?action=render')
+   
+    #traverse the link graph
+    while not traversal_queue:
+	link = traversal_queue.pop(0)
+	#find internel links
+	status, response = http.request(link)
+        soup = BeautifulSoup(response)
+	ilinks=soup.find_all('a')
+	for ilink in ilinks:
+            render_ilink =ilink['href']+'?action=render'    
+	    if ilink['href'].startswith(server) and render_ilink not in traversal_queue:
+	        traversal_queue.append(render_ilink)
+        #enque link into download_queue
+        download_queue.append(link)
+	print download_queue
+
+'''
+
+    soup=parseImages(outputDir, server, soup); 
             
-     	    #Take care of the links inside each page  
+     #Take care of the links inside each page  
             ilinks = soup.find_all('a');
             for ilink in ilinks:
                 #find out the static file name
@@ -102,6 +121,6 @@ def main(argv):
 		    del(ilink['title'])
             with open(outputDir+'/'+link['title'].replace(':','_')+'.html','w') as out_file:
             	out_file.write(soup.prettify(encoding="utf8"));
-
+'''
 if __name__== "__main__":
     main(sys.argv[1:])
