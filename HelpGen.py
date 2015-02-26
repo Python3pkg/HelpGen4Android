@@ -37,9 +37,15 @@ def parsePage(server,soup):
         filename = ilink['href'].split("/")[-1] 
         if filename != '' and ilink['href'].startswith(server):
         #modify name to fix a mediawiki bug
-            filename = filename.replace(':','_')
-	    ilink['href']=filename+".html"
-	    del(ilink['title'])
+            if 'new' in ilink['class']:
+		#disable signature and file downloading on wiki
+ 		ilink.name = 'b'
+                del ilink['href']
+		del ilink['class']
+	    else:
+                filename = filename.replace(':','_')
+	        ilink['href']=filename+".html"
+	        del(ilink['title'])
     return soup
   
 def downloadPage(outputDir, url, soup):
@@ -112,25 +118,5 @@ def main(argv):
         #download page
         downloadPage(outputDir, link, soup)   
         
-'''
-    soup=parseImages(outputDir, server, soup)
-            
-     #Take care of the links inside each page  
-            ilinks = soup.find_all('a');
-            for ilink in ilinks:
-                #find out the static file name
-		filename = ilink['href'].split("/")[-1]
-                #if this page belongs to the same site and it hasnt been downloaded yet 
-                if filename != '' and ilink['href'].startswith(server):
-		    #modify name to fix a mediawiki bug
-		    filename = filename.replace(':','_')
-		    if filename not in filelist: 
-		    	linkDownLoad(outputDir,ilink['href']+"?action=render",filename)
-                        filelist.append(filename)
-		    ilink['href']=filename+".html"
-		    del(ilink['title'])
-            with open(outputDir+'/'+link['title'].replace(':','_')+'.html','w') as out_file:
-            	out_file.write(soup.prettify(encoding="utf8"));
-'''
 if __name__== "__main__":
     main(sys.argv[1:])
