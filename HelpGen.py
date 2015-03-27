@@ -9,73 +9,24 @@ from bs4 import BeautifulSoup,SoupStrainer,Tag
 import httplib2
 from urllib import urlopen
 from urllib import urlretrieve
+from downloadUtils import imageDownload, pageDownload
+from parseUtils import parseImage, parsePage
 import shutil
 import sys
 import ConfigParser
 import os
 
-#download the image with specified url
-def imageDownload(outputDir,page_url,filename):
-    urlretrieve(page_url,outputDir+"/images/"+filename)
-
-def parseImages(outputDir, server,soup):
-    #Take care of the images inside each page:
-    imgs = soup.find_all('a',{'class':'image'})
-    for im in imgs:
-        filename = im.img['src'].split("/")[-1]
-	imageDownload(outputDir,server+im.img['src'],filename)
- 	#modify the reference to the image
-        new_tag =soup.new_tag( 'img', src="images/"+filename)
-	soup.find('a',{'href':im['href']}).replaceWith(new_tag) 
-    return soup
-
-def parsePage(server,soup):
-     #Take care of the links inside each page  
-    ilinks = soup.find_all('a');
-    for ilink in ilinks:
-        #find out the static file name
-        filename = ilink['href'].split("/")[-1] 
-        if filename != '' and ilink['href'].startswith(server):
-        #modify name to fix a mediawiki bug
-            if 'new' in ilink['class']:
-		#disable signature and file downloading on wiki
- 		ilink.name = 'b'
-                del ilink['href']
-		del ilink['class']
-	    else:
-                filename = filename.replace(':','_')
-	        ilink['href']=filename+".html"
-	        del(ilink['title'])
-    return soup
-  
-def downloadPage(outputDir, url, soup):
-    name = url.split("/")[-1].split("?")[0]	 
-    print name             
-    with open(outputDir+'/'+name.replace(':','_')+'.html','w') as out_file:
-        out_file.write(soup.prettify(encoding="utf8"));
-
-      
-def main(argv):
-
+def configure():
     # get configuration
     config = ConfigParser.SafeConfigParser()
     config.read('config.cfg')
     
     outputDir = config.get('s1','outputDir')  
     URL = config.get('s1','wikitemplateurl')+"?action=render"
-    print URL
     server = URL.split("/")[0]+"//"+URL.split("/")[2]
-    print server
-    #preparing output directory
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
-    if not os.path.exists(outputDir+'/images/'):
-        os.makedirs(outputDir+'/images/') 
-    
-    traversal_queue = []
-    download_queue = []
- 
-#    URL = "http://128.2.116.101/mediawiki/index.php/HelpGenWiki4android?action=render"
+    return outputDir,URL,server
+
+def getInitialLinks(traversal_queue,  download_queue, URL):
     http = httplib2.Http()
     status,response = http.request(URL)
 
@@ -84,8 +35,10 @@ def main(argv):
         if link.has_attr('href') and link.has_attr('title'):
 	    print link
             traversal_queue.append(link['href']+'?action=render')
-    
-    #traverse the link graph
+    return traversal_queue, download_queue
+
+def traverseLinkGraph(traversal_queue, download_queue, server):
+    http = httplib2.Http()
     while  traversal_queue:
 	link = traversal_queue.pop(0)
 	#find internel links
@@ -102,21 +55,42 @@ def main(argv):
 	            traversal_queue.append(render_ilink)
         #enque link into download_queue
         download_queue.append(link)
-        #print Counter(traversal_queue)
-    print download_queue
+    return download_queue
 
-    #download the link
+def download(download_queue, outputDir, server):
+    http = httplib2.Http()
     while download_queue:
 	link = download_queue.pop(0)
-        print link
         status, response = http.request(link)
 	soup = BeautifulSoup(response)
         #parse and download images
-        soup = parseImages(outputDir, server, soup)
+        soup = parseImage(outputDir, server, soup)
         #parse page
         soup = parsePage(server,soup)
         #download page
-        downloadPage(outputDir, link, soup)   
+        pageDownload(outputDir, link, soup)
+
+def main(argv):
+    
+    outputDir, URL, server = configure()
+    
+    #preparing output directory
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)
+    if not os.path.exists(outputDir+'/images/'):
+        os.makedirs(outputDir+'/images/') 
+    
+    traversal_queue = []
+    download_queue = []
+
+    #get initial page set from wiki template
+    traversal_queue, download_queue = getInitialLinks(traversal_queue, download_queue, URL) 
+    
+    #traverse the link graph
+    download_queue = traverseLinkGraph(traversal_queue, download_queue, server)
+
+    #download the link
+    download(download_queue, outputDir, server)   
         
 if __name__== "__main__":
     main(sys.argv[1:])
