@@ -11,6 +11,7 @@ from urllib import urlopen
 from urllib import urlretrieve
 from downloadUtils import imageDownload, pageDownload
 from parseUtils import parseImage, parsePage
+import config
 import shutil
 import sys
 import ConfigParser
@@ -70,7 +71,7 @@ def download(download_queue, outputDir, server):
         #download page
         pageDownload(outputDir, link, soup)
 
-def main(argv):
+def helpGen():
     
     outputDir, URL, server = configure()
     
@@ -93,4 +94,4 @@ def main(argv):
     download(download_queue, outputDir, server)   
         
 if __name__== "__main__":
-    main(sys.argv[1:])
+    helpGen()
