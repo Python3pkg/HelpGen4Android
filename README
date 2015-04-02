@@ -8,6 +8,7 @@ BeatifulSoup library 4.2.0 is required
 Your wiki must be mediawiki powered
 
 3.Manual:
+```
 1. Make sure your mediawiki site has a template page like this:
      https://www.timecat.info/wiki/index.php/TimeCat:Doc:Help
 
@@ -16,8 +17,12 @@ Your wiki must be mediawiki powered
      You could also modify templateURL
 
 3. run the HelpGen.py script to get the result
-
+```
 Issues:
 1. Right now, the tool only works with Mediawiki beacause our parsing is specialized designed for mediawiki
 
+License: 
 
+The MIT License (MIT)
+
+Copyright (c) 2015 
