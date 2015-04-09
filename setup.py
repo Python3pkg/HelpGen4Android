@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name='HelpGen4Android',
-		version='0.3.1',
+		version='0.3.3',
 		url='https://github.com/Eagles2F/HelpGen4Android',
 		author='Evan Lee',
 		author_email='thueeliyifan@gmail.com',

@@ -1,1 +1,1 @@
-__all__ = ["HelpGen4Android", "config", "parseUtils", "downloadUtils"]
+__all__ = ["helpGen", "config", "parseUtils", "downloadUtils"]
