@@ -1,2 +1,4 @@
 Timecat/
 *.pyc
+dist/
+MANIFEST
