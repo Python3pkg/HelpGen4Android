@@ -18,7 +18,9 @@ https://github.com/Eagles2F/HelpGen4Android
      1. Make sure your mediawiki site has a template page like this:
           https://www.timecat.info/wiki/index.php/TimeCat:Doc:Help
 
-     2. Import HelpGen4Android in your python script.
+     2. Import HelpGen4Android in your python script:
+	from HelpGen4Android.config import configure
+	from HelpGen4Android.helpGen import helpGen
 
      3. Make sure you configure fistly:  
            configure(url='https://www.timecat.info/wiki/index.php/TimeCat:Doc:Help',
