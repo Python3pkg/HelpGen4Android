@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name='HelpGen4Android',
-		version='0.3.3',
+		version='0.3.5',
 		url='https://github.com/Eagles2F/HelpGen4Android',
 		author='Evan Lee',
 		author_email='thueeliyifan@gmail.com',
@@ -11,5 +11,5 @@ setup(name='HelpGen4Android',
 			'Topic :: Software Development :: Documentation', 'License :: OSI Approved :: MIT License',
 			'Programming Language :: Python :: 2.7',],
 		keywords = 'mobile app development',
-		install_requires = ['bs4']
+		install_requires = ['beautifulsoup4']
 		)
