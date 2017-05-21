@@ -1,6 +1,6 @@
-import ConfigParser
+import configparser
 def configure(**args):
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
 
     config.add_section('s1')
     config.set('s1', 'wikiTemplateURL',args['url'])

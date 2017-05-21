@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup, SoupStrainer, Tag
-from downloadUtils import imageDownload
+from .downloadUtils import imageDownload
 
 def parseImage(outputDir, server,soup):
     #Take care of the images inside each page:
@@ -20,7 +20,7 @@ def parsePage(server,soup):
         filename = ilink['href'].split("/")[-1] 
         if filename != '' and ilink['href'].startswith(server):
         #modify name to fix a mediawiki bug
-            if ilink.has_key('class') and 'new' in ilink['class']: 
+            if 'class' in ilink and 'new' in ilink['class']: 
 		#disable signature and file downloading on wiki
  		ilink.name = 'b'
                 del ilink['href']

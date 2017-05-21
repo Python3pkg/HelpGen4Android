@@ -1,4 +1,4 @@
-from  urllib import urlretrieve
+from  urllib.request import urlretrieve
 
 #download the image with specified url
 def imageDownload(outputDir,page_url,filename):

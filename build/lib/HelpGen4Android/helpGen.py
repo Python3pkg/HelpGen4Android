@@ -7,22 +7,22 @@ Created on Wed Jan 14 16:37:36 2015
 from collections import Counter
 from bs4 import BeautifulSoup,SoupStrainer,Tag
 import httplib2
-from urllib import urlopen
-from urllib import urlretrieve
-from downloadUtils import imageDownload, pageDownload
-from parseUtils import parseImage, parsePage
-import config
+from urllib.request import urlopen
+from urllib.request import urlretrieve
+from .downloadUtils import imageDownload, pageDownload
+from .parseUtils import parseImage, parsePage
+from . import config
 import shutil
 import sys
-import ConfigParser
+import configparser
 import os
 
 def configure():
     # get configuration
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read('config.cfg')
     if config:
-        print '\n'+"please configure firstly."+'\n'+ "from HelpGen4Android.config import configure"+ '\n'+ "configure(url = '' , outputDir = '')"+'\n'
+        print('\n'+"please configure firstly."+'\n'+ "from HelpGen4Android.config import configure"+ '\n'+ "configure(url = '' , outputDir = '')"+'\n')
     outputDir = config.get('s1','outputDir')  
     URL = config.get('s1','wikitemplateurl')+"?action=render"
     server = URL.split("/")[0]+"//"+URL.split("/")[2]
@@ -35,7 +35,7 @@ def getInitialLinks(traversal_queue,  download_queue, URL):
     #enque the link in the template page
     for link in BeautifulSoup(response, parseOnlyThese = SoupStrainer('a')):
         if link.has_attr('href') and link.has_attr('title'):
-	    print link
+	    print(link)
             traversal_queue.append(link['href']+'?action=render')
     return traversal_queue, download_queue
 
